@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="./css/main.css"> <!-- 스타일 파일 링크 -->
+</head>
+<body>
+
+<div id="modal-background">
+    <div class="userModal" id="myModal">
+        <label for="username"><b>이름:</b></label>
+        <input type="text" id="username" class="form-control" placeholder="이름을 입력하세요">
+        <button id="setUsername">이름 설정</button>
+    </div>
+</div>
+<div id="conversation">
+    <div class="col-md-12" id="chatting"></div>
+    <form id="messageForm">
+        <input type="text" id="message" placeholder="Type your message...">
+        <button type="submit" id="send">Send</button>
+    </form>
+</div>
+<button id="connect">Connect</button>
+<button id="disconnect">Disconnect</button>
+
+
+
+<!-- 모달 -->
+<div class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <p>Your message has been sent!</p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script> <!-- SockJS 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script> <!-- Stomp.js 라이브러리 -->
+<script src="./js/main.js"></script> <!-- main.js 스크립트 파일 -->
+</body>
+
+</html>
