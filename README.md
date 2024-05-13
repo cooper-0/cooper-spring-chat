@@ -9,7 +9,7 @@
     logging.level.[org.springframework.web]=debug
     
     #몽고DB 연결
-    spring.data.mongodb.uri=mongodb+srv://Yun:tjrrbtjrrb13@cooper-chat.kku3wii.mongodb.net/?retryWrites=true&w=majority&appName=cooper-chat
+    spring.data.mongodb.uri=mongodb+srv://user:<password><Cluster name>.kku3wii.mongodb.net/?retryWrites=true&w=majority&appName=<Cluster name>
     spring.data.mongodb.database=cooper
     
     spring.jpa.hibernate.ddl-auto=update
