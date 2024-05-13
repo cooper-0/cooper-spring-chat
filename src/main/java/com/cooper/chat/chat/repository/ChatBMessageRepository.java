@@ -6,16 +6,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.time.LocalDateTime;
 
-import com.cooper.chat.chat.model.Chat;
 
 @Repository
-public interface ChatMessageRepository extends MongoRepository<Chat, String> {
+public interface ChatBMessageRepository extends MongoRepository<ChatB, String> {
 
     // 특정 방의 모든 채팅 메시지를 불러오는 메서드
-    List<Chat> findByRoomId(String roomId);
+    List<ChatB> findByRoomId(String roomId);
 
     // 특정 시간 이후에 전송된 채팅 메시지를 불러오는 메서드
-    List<Chat> findBySendDateAfter(LocalDateTime sendDate);
+    List<ChatB> findBySendDateAfter(LocalDateTime sendDate);
 
     // 기타 필요한 쿼리 메서드 추가 가능
 

@@ -1,3 +1,9 @@
+var stompClient = null;
+var roomId = "{room}";
+var chat = "[]"; // 초기 채팅 리스트
+var senderID = "";
+var senderEmail = "Yun@example.com";
+
 $(document).ready(function(){
     // 페이지 로드 시 이름 설정 모달 표시
     $(".userModal").css("display", "block");
@@ -32,11 +38,7 @@ $(document).ready(function(){
     });
 });
 
-var stompClient = null;
-var roomId = "123";
-var chatList = "[]"; // 초기 채팅 리스트
-var senderID = "";
-var senderEmail = "Yun@example.com";
+
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -50,13 +52,13 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://172.16.82.131:8080/ws-stomp');
+    var socket = new SockJS('http://192.168.0.17:8080/ws-stomp');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected:', frame); // 연결 확인 로그
-        loadChat(chatList); // 저장된 채팅 불러오기
+
 
         // 구독
         stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
@@ -94,40 +96,71 @@ function sendChat() {
         $("#message").val(''); // 전송 후 입력 필드 비우기
     }
 }
+window.onload = function() {
+    loadChat();
+};
 
-// 저장된 채팅 불러오기
-function loadChat(chatListString) {
-    try {
-        var chatList = JSON.parse(chatListString); // JSON 파싱
-
-        if (Array.isArray(chatList) && chatList.length > 0) {
-            chatList.forEach(function(chat) {
-                showChat(chat); // 각 채팅 표시
-            });
-        } else {
-            console.error("Empty chat list or invalid format:", chatList); // 빈 배열 또는 형식 오류
-        }
-    } catch (error) {
-        console.error("Error parsing chat list:", error); // 파싱 오류
-    }
+function loadChat() {
+    fetch('/api/chat/previous') // 서버의 API 엔드포인트로 요청을 보냅니다.
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답이 실패하였습니다.');
+            }
+            return response.json();
+        })
+        .then(messages => {
+            const chatMessagesDiv = document.getElementById('chatting');
+            chatMessagesDiv.innerHTML = ''; // 기존의 메시지를 지우고 새로운 메시지를 추가합니다.
+            if (Array.isArray(messages)) {
+                messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = `${message.senderID}: ${message.message}`;
+                    chatMessagesDiv.appendChild(messageElement);
+                });
+            } else {
+                console.error('서버 응답 형식이 올바르지 않습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
+        });
 }
 
+
+
 // 보낸 채팅 보기
-function showChat(chatMessageDTO) {
-    var messageContent = "[" + chatMessageDTO.senderID + "] " + chatMessageDTO.message;
-    if (chatMessageDTO.senderEmail === senderEmail) {
-        $("#chatting").append(
-            "<div class='chatting_own'><tr><td>" + messageContent + "</td></tr></div>"
-        );
-    } else {
+
+function showChat(chat) {
+    var messageContent = "[" + chat.senderID + "] " + chat.message;
+
         $("#chatting").append(
             "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
         );
-    }
+
+        /*
+        $("#chatting").append(
+            "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
+        );
+
+         */
+
 
     // 스크롤을 맨 아래로 이동
-    $('.col-md-12').scrollTop($('.col-md-12')[0].scrollHeight);
+    $('#chatting').scrollTop($('#chatting')[0].scrollHeight);
 }
+
+// 방 선택 함수
+function selectRoom(room) {
+    roomId = room;
+    console.log("Room selected:", roomId);
+}
+
+// 방 선택 이벤트 처리
+$(".room-option").click(function() {
+    var room = $(this).data("room");
+    selectRoom(room);
+});
+
 
 // 이벤트 핸들링
 $(function() {
@@ -146,6 +179,11 @@ $(function() {
     $("#send").click(function() {
         sendChat(); // 채팅 전송
     });
+    $("#logout").click(function() {
+        senderID = "";
+        $(".userModal").css("display", "block"); // 사용자 이름 설정 모달 보이기
+    });
+
 });
 
 // 페이지 로드 시 자동 연결

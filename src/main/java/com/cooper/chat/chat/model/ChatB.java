@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "chat") // MongoDB의 컬렉션 이름을 명시합니다.
-public class Chat {
+@Document(collection = "chat_b")
 
+public class ChatB {
     @Id // MongoDB 문서의 _id 필드를 나타냅니다.
     private String id; // ID 타입을 ObjectId로 변경합니다.
     private ChatRoom room;
@@ -36,7 +36,7 @@ public class Chat {
     private LocalDateTime sendDate;
 
     @Builder
-    public Chat(ChatRoom room, String roomId, String senderID, String senderEmail, String message) {
+    public ChatB(ChatRoom room, String roomId, String senderID, String senderEmail, String message) {
         this.room = room;
         this.roomId = roomId;
         this.senderID = senderID;
@@ -44,8 +44,8 @@ public class Chat {
         this.message = message;
         this.sendDate = LocalDateTime.now();
     }
-    public static Chat createChat(ChatRoom room, String roomId, String senderID, String senderEmail, String message) {
-        return Chat.builder()
+    public static ChatB createChatB(ChatRoom room, String roomId, String senderID, String senderEmail, String message) {
+        return ChatB.builder()
                 .room(room)
                 .roomId(roomId)
                 .senderID(senderID)
@@ -54,3 +54,6 @@ public class Chat {
                 .build();
     }
 }
+
+
+
