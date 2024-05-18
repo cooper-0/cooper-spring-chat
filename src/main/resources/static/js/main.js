@@ -126,6 +126,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     messages.forEach(message => {
                         const messageElement = document.createElement('div');
                         messageElement.textContent = `${message.senderID}: ${message.message}`;
+                        //삭제 버튼
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = '삭제';
+                        deleteButton.addEventListener('click', () => deleteMessage(message.id, collectionName));
+                        messageElement.appendChild(deleteButton);
                         chatMessagesDiv.appendChild(messageElement);
                     });
                 } else {
@@ -136,11 +141,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
             });
     }
+    //메시지 삭제 버튼 엔드포인트
+    function deleteMessage(messageId, collectionName) {
+        fetch(`/api/chat/delete?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('메시지 삭제 실패');
+            }
+        // 메시지 삭제 후 채팅 메시지를 다시 로드
+            loadChat(collectionName);
+        })
+        .catch(error => {
+            console.error('메시지를 삭제하는 중 오류가 발생했습니다:', error);
+        });
+    }
 
-    // Optional: Add event listener for message sending if needed
+
+
     document.getElementById('messageForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        // Add your message sending logic here
     });
 });
 
@@ -228,14 +249,3 @@ $(document).ready(function() {
     });
 });
 
-// 모달 토글
-var modal = document.querySelector(".modal");
-var trigger = document.getElementById("send");
-var closeButton = document.querySelector(".close-button");
-
-function toggleModal() {
-    modal.classList.toggle("show-modal"); // 모달 토글
-}
-
-trigger.addEventListener("click", toggleModal);
-closeButton.addEventListener("click", toggleModal);
