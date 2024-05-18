@@ -1,33 +1,27 @@
 package com.cooper.chat.chat;
 
-import com.cooper.chat.chat.model.ChatB;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.annotation.PostConstruct;
 import java.util.*;
 import com.cooper.chat.chat.model.ChatRoom;
 import com.cooper.chat.chat.model.Chat;
-import com.cooper.chat.chat.repository.ChatMessageRepository;
-import com.cooper.chat.chat.repository.ChatBMessageRepository;
-import java.time.LocalDateTime;
+
 import java.util.List;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Slf4j
 @Service
 public class ChatService {
 
-    private final ChatMessageRepository ChatMessageRepository;
-    private final ChatBMessageRepository ChatBMessageRepository;
+    private final MongoTemplate mongoTemplate;
     private Map<String, ChatRoom> chatRooms;
 
     @Autowired
-    public ChatService(ChatMessageRepository ChatMessageRepository, ChatBMessageRepository ChatBMessageRepository) {
-        this.ChatMessageRepository = ChatMessageRepository;
-        this.ChatBMessageRepository = ChatBMessageRepository;
+    public ChatService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
-
 
 
     @PostConstruct
@@ -35,8 +29,8 @@ public class ChatService {
         chatRooms = new LinkedHashMap<>();
     }
 
-    public List<Chat> getPreviousChats() {
-        return ChatMessageRepository.findAll();
+    public List<Chat> getPreviousChats(String collectionName) {
+        return mongoTemplate.findAll(Chat.class, collectionName);
     }
 
 
@@ -54,24 +48,12 @@ public class ChatService {
     }
 
 
+
     // 수정된 createChat 메서드
-    public Chat createChat(String roomId, String sender, String senderEmail, String message) {
-        ChatRoom room = findRoomById(roomId);
-        if (room == null) {
-            // 채팅 방이 없으면 새로 생성
-            room = createRoom("Default Room");
-        }
-        Chat chat = Chat.createChat(room, roomId, sender, senderEmail, message);
-        return ChatMessageRepository.save(chat); // MongoDB에 채팅 저장
-    }
-    public ChatB createChatB(String roomId, String sender, String senderEmail, String message) {
-        ChatRoom room = findRoomById(roomId);
-        if (room == null) {
-            // 채팅 방이 없으면 새로 생성
-            room = createRoom("Default Room");
-        }
-        ChatB chat_b = ChatB.createChatB(room, roomId, sender, senderEmail, message);
-        return ChatBMessageRepository.save(chat_b); // MongoDB에 채팅 저장
+    public Chat createChat(String collectionName, String roomId, String senderID, String senderEmail, String message) {
+        Chat chat = Chat.createChat(null, roomId, senderID, senderEmail, message);
+        mongoTemplate.save(chat, collectionName);
+        return chat;
     }
 
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "chat") // MongoDB의 컬렉션 이름을 명시합니다.
+@Document
 public class Chat {
 
     @Id // MongoDB 문서의 _id 필드를 나타냅니다.

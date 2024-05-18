@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Application</title>
-    <link rel="stylesheet" href="./css/main.css"> <!-- 스타일 파일 링크 -->
+    <link rel="stylesheet" href="css/main.css"> <!-- 스타일 파일 링크 -->
 </head>
 <body>
 
 <div id="modal-background">
     <div class="userModal" id="myModal">
-        <div class = "nameModal" id="myModal3">
+        <div class="nameModal" id="myModal3">
             <label for="username"><b>이름:</b></label>
             <input type="text" id="username" class="form-control" placeholder="이름을 입력하세요">
         </div>
         <button id="setUsername">입장</button>
-
-
     </div>
 </div>
 
-<div id="conversation">
+<div id="conversation" style="display:none;">
     <div class="selectChatRoom" id="roomSelect">
         <label for="roomSelect"><b>채팅방 선택:</b></label>
         <div class="room-selection">
@@ -38,11 +37,9 @@
         </form>
     </div>
 </div>
-<button id="logout">로그아웃</button>
+<button id="logout" style="display:none;">로그아웃</button>
 <button id="connect">Connect</button>
-<button id="disconnect">Disconnect</button>
-
-
+<button id="disconnect" style="display:none;">Disconnect</button>
 
 <!-- 모달 -->
 <div class="modal">
@@ -56,6 +53,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script> <!-- SockJS 라이브러리 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script> <!-- Stomp.js 라이브러리 -->
 <script src="./js/main.js"></script> <!-- main.js 스크립트 파일 -->
-</body>
 
+</body>
 </html>

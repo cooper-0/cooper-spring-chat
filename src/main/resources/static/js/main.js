@@ -52,7 +52,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://192.168.0.17:8080/ws-stomp');
+    var socket = new SockJS('http://121.155.7.164:8080/ws-stomp');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function (frame) {
@@ -96,35 +96,53 @@ function sendChat() {
         $("#message").val(''); // 전송 후 입력 필드 비우기
     }
 }
-window.onload = function() {
-    loadChat();
-};
 
-function loadChat() {
-    fetch('/api/chat/previous') // 서버의 API 엔드포인트로 요청을 보냅니다.
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('서버 응답이 실패하였습니다.');
-            }
-            return response.json();
-        })
-        .then(messages => {
-            const chatMessagesDiv = document.getElementById('chatting');
-            chatMessagesDiv.innerHTML = ''; // 기존의 메시지를 지우고 새로운 메시지를 추가합니다.
-            if (Array.isArray(messages)) {
-                messages.forEach(message => {
-                    const messageElement = document.createElement('div');
-                    messageElement.textContent = `${message.senderID}: ${message.message}`;
-                    chatMessagesDiv.appendChild(messageElement);
-                });
-            } else {
-                console.error('서버 응답 형식이 올바르지 않습니다.');
-            }
-        })
-        .catch(error => {
-            console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
+document.addEventListener("DOMContentLoaded", function () {
+    const chatMessagesDiv = document.getElementById('chatting');
+    const roomButtons = document.querySelectorAll('.room-option');
+
+    // Event listener for room selection buttons
+    roomButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const room = this.getAttribute('data-room');
+            const collectionName = (room === 'roomA') ? 'chat' : 'chat_b';
+            loadChat(collectionName);
         });
-}
+    });
+
+    function loadChat(collectionName) {
+        const url = `/api/chat/previous/${encodeURIComponent(collectionName)}`;
+
+        fetch(url) // 서버의 API 엔드포인트로 요청을 보냅니다.
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답이 실패하였습니다.');
+                }
+                return response.json();
+            })
+            .then(messages => {
+                chatMessagesDiv.innerHTML = ''; // 기존의 메시지를 지우고 새로운 메시지를 추가합니다.
+                if (Array.isArray(messages)) {
+                    messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.textContent = `${message.senderID}: ${message.message}`;
+                        chatMessagesDiv.appendChild(messageElement);
+                    });
+                } else {
+                    console.error('서버 응답 형식이 올바르지 않습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
+            });
+    }
+
+    // Optional: Add event listener for message sending if needed
+    document.getElementById('messageForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        // Add your message sending logic here
+    });
+});
 
 
 
@@ -133,16 +151,16 @@ function loadChat() {
 function showChat(chat) {
     var messageContent = "[" + chat.senderID + "] " + chat.message;
 
-        $("#chatting").append(
-            "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
-        );
+    $("#chatting").append(
+        "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
+    );
 
-        /*
-        $("#chatting").append(
-            "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
-        );
+    /*
+    $("#chatting").append(
+        "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
+    );
 
-         */
+     */
 
 
     // 스크롤을 맨 아래로 이동
@@ -150,16 +168,23 @@ function showChat(chat) {
 }
 
 // 방 선택 함수
-function selectRoom(room) {
-    roomId = room;
-    console.log("Room selected:", roomId);
-}
-
 // 방 선택 이벤트 처리
 $(".room-option").click(function() {
     var room = $(this).data("room");
-    selectRoom(room);
+    selectRoom(room); // 방 선택 시 해당 방 정보를 서버로 전송
 });
+
+// 방 선택 함수
+function selectRoom(room) {
+    roomId = room;
+    console.log("Room selected:", roomId);
+     // 방이 변경될 때마다 해당 방의 채팅을 불러오도록 loadChat 함수 호출
+
+    // 선택한 채팅방 정보를 서버로 전송
+    stompClient.send("/selectRoom", {}, JSON.stringify({
+        'roomId': roomId
+    }));
+}
 
 
 // 이벤트 핸들링
