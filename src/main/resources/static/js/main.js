@@ -96,9 +96,9 @@ function sendChat() {
         $("#message").val(''); // 전송 후 입력 필드 비우기
     }
 }
-
+/*
 document.addEventListener("DOMContentLoaded", function () {
-    const chatMessagesDiv = document.getElementById('chatting');
+
     const roomButtons = document.querySelectorAll('.room-option');
 
     // Event listener for room selection buttons
@@ -106,65 +106,143 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener('click', function () {
             const room = this.getAttribute('data-room');
             const collectionName = (room === 'roomA') ? 'chat' : 'chat_b';
+            selectRoom(room);
             loadChat(collectionName);
         });
     });
 
-    function loadChat(collectionName) {
-        const url = `/api/chat/previous/${encodeURIComponent(collectionName)}`;
 
-        fetch(url) // 서버의 API 엔드포인트로 요청을 보냅니다.
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 응답이 실패하였습니다.');
-                }
-                return response.json();
-            })
-            .then(messages => {
-                chatMessagesDiv.innerHTML = ''; // 기존의 메시지를 지우고 새로운 메시지를 추가합니다.
-                if (Array.isArray(messages)) {
-                    messages.forEach(message => {
-                        const messageElement = document.createElement('div');
-                        messageElement.textContent = `${message.senderID}: ${message.message}`;
-                        //삭제 버튼
-                        const deleteButton = document.createElement('button');
-                        deleteButton.textContent = '삭제';
-                        deleteButton.addEventListener('click', () => deleteMessage(message.id, collectionName));
-                        messageElement.appendChild(deleteButton);
-                        chatMessagesDiv.appendChild(messageElement);
-                    });
-                } else {
-                    console.error('서버 응답 형식이 올바르지 않습니다.');
-                }
-            })
-            .catch(error => {
-                console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
-            });
-    }
-    //메시지 삭제 버튼 엔드포인트
-    function deleteMessage(messageId, collectionName) {
-        fetch(`/api/chat/delete?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('메시지 삭제 실패');
-            }
-        // 메시지 삭제 후 채팅 메시지를 다시 로드
-            loadChat(collectionName);
-        })
-        .catch(error => {
-            console.error('메시지를 삭제하는 중 오류가 발생했습니다:', error);
+    roomButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const room = this.getAttribute('data-room');
+            selectRoom(room);
         });
-    }
-
+    });
 
 
     document.getElementById('messageForm').addEventListener('submit', function (event) {
         event.preventDefault();
+        sendChat(); // 폼 제출 시 채팅 메시지 전송
     });
 });
+*/
 
+function getCollectionName(roomId) {
+    switch (roomId) {
+        case 'roomA':
+            return 'chat';
+        case 'roomB':
+            return 'chat_b';
+        default:
+            return roomId; // 새로운 방의 경우 방 ID 자체를 컬렉션 이름으로 사용
+    }
+}
+
+function loadChat(roomId) {
+    const chatMessagesDiv = document.getElementById('chatting');
+    const collectionName = getCollectionName(roomId);
+    const url = `/api/chat/previous/${encodeURIComponent(collectionName)}`;
+
+    fetch(url) // 서버의 API 엔드포인트로 요청을 보냅니다.
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답이 실패하였습니다.');
+            }
+            return response.json();
+        })
+        .then(messages => {
+            chatMessagesDiv.innerHTML = ''; // 기존의 메시지를 지우고 새로운 메시지를 추가합니다.
+            if (Array.isArray(messages)) {
+                messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = `${message.senderID}: ${message.message}`;
+                    // 삭제 버튼
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '삭제';
+                    deleteButton.addEventListener('click', () => deleteMessage(message.id, collectionName));
+                    messageElement.appendChild(deleteButton);
+                    chatMessagesDiv.appendChild(messageElement);
+                });
+            } else {
+                console.error('서버 응답 형식이 올바르지 않습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
+        });
+}
+
+// 동적으로 채팅방 생성
+document.getElementById('createRoom').addEventListener('click', function () {
+    const roomId = document.getElementById('newRoomId').value;
+    if (roomId) {
+        fetch('/api/room/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'roomId=' + encodeURIComponent(roomId)
+        })
+            .then(response => response.text())
+    .then(data => {
+            alert(data); // 채팅방 생성 성공 메시지
+            // 새로 생성된 채팅방 버튼 추가
+            const newButton = document.createElement('button');
+            newButton.className = 'room-option';
+            newButton.dataset.room = roomId;
+            newButton.textContent = '채팅방 ' + roomId;
+            document.querySelector('.room-selection').appendChild(newButton);
+
+            // 새로 생성된 채팅방 버튼에 클릭 이벤트 추가
+            newButton.addEventListener('click', function () {
+                selectRoom(roomId);
+
+            });
+        })
+    .catch(error => console.error('Error:', error));
+    } else {
+        alert('채팅방 이름을 입력하세요');
+    }
+
+});
+// 메시지 삭제 버튼 엔드포인트
+function deleteMessage(messageId, collectionName) {
+    fetch(`/api/chat/delete?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('메시지 삭제 실패');
+            }
+            // 메시지 삭제 후 채팅 메시지를 다시 로드
+            loadChat(roomId);
+        })
+        .catch(error => {
+            console.error('메시지를 삭제하는 중 오류가 발생했습니다:', error);
+        });
+}
+// 방 선택 함수
+function selectRoom(room) {
+    roomId = room;
+    console.log("Room selected:", roomId);
+
+    // 방이 변경될 때마다 해당 방의 채팅을 불러오도록 loadChat 함수 호출
+
+    // 선택한 채팅방 정보를 서버로 전송
+    if (stompClient && stompClient.connected) {
+        stompClient.send("/selectRoom", {}, JSON.stringify({
+            'roomId': roomId
+        }));
+
+        // 기존 구독 취소하고 새로운 방에 대해 구독
+        stompClient.unsubscribe('/room/' + roomId);
+        stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
+            console.log("New message received:", chatMessageDTO);
+            //showChat(JSON.parse(chatMessageDTO.body));
+        });
+    }
+    loadChat(roomId);
+}
 
 
 // 보낸 채팅 보기
@@ -195,17 +273,7 @@ $(".room-option").click(function() {
     selectRoom(room); // 방 선택 시 해당 방 정보를 서버로 전송
 });
 
-// 방 선택 함수
-function selectRoom(room) {
-    roomId = room;
-    console.log("Room selected:", roomId);
-     // 방이 변경될 때마다 해당 방의 채팅을 불러오도록 loadChat 함수 호출
 
-    // 선택한 채팅방 정보를 서버로 전송
-    stompClient.send("/selectRoom", {}, JSON.stringify({
-        'roomId': roomId
-    }));
-}
 
 
 // 이벤트 핸들링

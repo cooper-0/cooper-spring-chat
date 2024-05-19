@@ -39,6 +39,7 @@ public class ChatService {
         mongoTemplate.remove(query, Chat.class, collectionName);
     }
 
+
     // 필요없는 구문
     /*
     public ChatRoom findRoomById(String roomId) {
@@ -61,6 +62,12 @@ public class ChatService {
         Chat chat = Chat.createChat(null, roomId, senderID, senderEmail, message);
         mongoTemplate.save(chat, collectionName);
         return chat;
+    }
+
+    public void createChatCollection(String collectionName) {
+        if (!mongoTemplate.collectionExists(collectionName)) {
+            mongoTemplate.createCollection(collectionName);
+        }
     }
 
 }

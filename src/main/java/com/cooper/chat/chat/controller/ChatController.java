@@ -37,6 +37,8 @@ public class ChatController {
         chatService.deleteMessage(messageId, collectionName);
     }
 
+
+
     @MessageMapping("/{roomId}")
     @SendTo("/room/{roomId}")
     public ChatMessageDto chat(@DestinationVariable String roomId, ChatMessageDto message) {
@@ -47,14 +49,7 @@ public class ChatController {
     }
 
     private String getCollectionName(String roomId) {
-        switch (roomId) {
-            case "roomA":
-                return "chat";
-            case "roomB":
-                return "chat_b";
-            default:
-                throw new IllegalArgumentException("Invalid roomId: " + roomId);
-        }
+        return roomId;
     }
 
     private ChatMessageDto buildChatMessageDto(String roomId, String senderID, String senderEmail, String message) {
