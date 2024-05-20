@@ -1,31 +1,19 @@
 package com.cooper.chat.chat.model;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import javax.persistence.*;
 
 
+@Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ChatRoom {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatRoom_id")
-    private Long id;
-    private String name;
+    private String roomId;
 
     @Builder
-    public ChatRoom(String name) {
-        this.name = name;
+    public ChatRoom(String roomId) {
+        this.roomId = roomId;
     }
 
-    public static ChatRoom createRoom(String name) {
-        return ChatRoom.builder()
-                .name(name)
-                .build();
-    }
 }

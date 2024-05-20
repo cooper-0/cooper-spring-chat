@@ -40,22 +40,6 @@ public class ChatService {
     }
 
 
-    // 필요없는 구문
-    /*
-    public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
-
-    public ChatRoom createRoom(String name) {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatRoom.builder()
-                .name(name)
-                .build();
-        chatRooms.put(randomId, chatRoom);
-        return chatRoom;
-    }
-
-    */
 
     // 수정된 createChat 메서드
     public Chat createChat(String collectionName, String roomId, String senderID, String senderEmail, String message) {
@@ -68,6 +52,16 @@ public class ChatService {
         if (!mongoTemplate.collectionExists(collectionName)) {
             mongoTemplate.createCollection(collectionName);
         }
+    }
+    // 채팅방 삭제 메서드
+    public void deleteRoom(String roomId) {
+        chatRooms.remove(roomId);
+        mongoTemplate.dropCollection(roomId);
+    }
+
+    // 채팅방 목록 불러오기 메서드
+    public List<String> getCollectionNames() {
+        return new ArrayList<>(mongoTemplate.getCollectionNames());
     }
 
 }
