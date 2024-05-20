@@ -23,11 +23,14 @@
 <div id="conversation" style="display:none;">
     <div class="selectChatRoom" id="roomSelect">
         <label for="roomSelect"><b>채팅방 선택:</b></label>
-        <div class="room-selection">
-            <button class="room-option" data-room="roomA">채팅방 A</button>
-            <button class="room-option" data-room="roomB">채팅방 B</button>
-            <!-- 필요한 만큼 채팅방을 추가할 수 있습니다. -->
-        </div>
+            <input type="text" id="newRoomId" placeholder="채팅방 이름 입력">
+            <button id="createRoom">채팅방 생성</button>
+            <div class="room-selection-box">
+                <div class="room-selection">
+                    <!-- 필요한 만큼 채팅방을 추가할 수 있습니다. -->
+                </div>
+            </div>
+        <button id="deleteRoom">채팅방 삭제</button>
     </div>
     <div class="conversation-right">
         <div id="chatting"></div>
@@ -38,12 +41,6 @@
     </div>
 </div>
 <button id="logout">로그아웃</button>
-
-<div>
-<input type="text" id="newRoomId" placeholder="채팅방 이름 입력">
-<button id="createRoom">채팅방 생성</button>
-</div>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 라이브러리 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script> <!-- SockJS 라이브러리 -->

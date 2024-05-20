@@ -1,15 +1,11 @@
-/* styles.css */
-
-/* 대화창 스타일 */
 #conversation {
     width: 80%;
     margin: 0 auto;
     padding: 20px;
     height: 100%;
-    display: flex; /* Flexbox 레이아웃을 사용하여 요소들을 가로로 배치 */
-    align-items: flex-start; /* 요소들을 세로 축에서 위로 정렬 */
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-
 }
 
 .conversation-right {
@@ -17,21 +13,20 @@
     margin-right: 10px;
 }
 
-/* 채팅 메시지 스타일 */
 #chatting {
     border: 1px solid #ccc;
     padding: 10px;
     overflow-y: auto;
     color: black;
-    background-color: #f0f0f0; /* 왼쪽 채팅 배경색 */
+    background-color: #f0f0f0;
     width: 30%;
-    height: 60vh; /* 대화창의 높이를 80%로 지정 */
-
+    height: 60vh;
 }
+
 .selectChatRoom,
 #chatting {
-    width: calc(50% - 10px); /* 가로 공간을 반씩 차지하고 간격은 margin으로 조정 */
-    margin-right: 10px; /* 각 요소 사이의 간격을 지정 */
+    width: calc(50% - 10px);
+    margin-right: 10px;
 }
 
 .selectChatRoom {
@@ -39,34 +34,46 @@
     height: 50%;
 }
 
-.chatting_own {
-    text-align: right; /* 오른쪽 정렬 */
-    background-color: #d0f0c0; /* 오른쪽 채팅 배경색 */
+.room-selection-box {
+    border: 2px solid #ccc;
     padding: 10px;
-    margin: 10px;
-}
-/* 다른 사용자가 입력한 채팅 스타일 */
-.chatting_other {
-    text-align: left;
-    background-color: #c0e0f0; /* 다른 사용자가 입력한 채팅 배경색 */
-    padding: 10px;
-    margin: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    height: 50%;
+    overflow-y: auto;
 }
 
-/* 채팅 입력 폼 스타일 */
+.room-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.room-option {
+    padding: 10px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.room-option:hover {
+    background-color: #0056b3;
+}
+
 #messageForm {
     margin-top: 20px;
-    width: calc(50% - 10px); /* 대화창의 반 너비만큼 설정 */
-    margin-right: 10px; /* 대화창과의 간격 조정 */
-    margin-bottom: 20px; /* 하단 간격 설정 */
+    width: calc(50% - 10px);
+    margin-right: 10px;
+    margin-bottom: 20px;
 }
 
 #message {
-    width: 100%; /* 폼 요소를 가득 채우도록 설정 */
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     margin-bottom: 10px;
-
 }
 
 #send {
@@ -81,43 +88,7 @@
     background-color: #0056b3;
 }
 
-/* 연결 및 연결 끊기 버튼 스타일 */
-#connect,
-#disconnect {
-    display: block;
-    margin: 10px auto;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
 
-#connect:hover,
-#disconnect:hover {
-    background-color: #218838;
-}
-
-/* 모달 스타일 */
-.modal {
-    display: none; /* 모달은 초기에 숨겨짐 */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 반투명한 배경색 */
-    z-index: 1;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 400px;
-}
 
 .close-button {
     color: #aaa;
@@ -134,18 +105,16 @@
 }
 
 #modal-background {
-
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 반투명 회색 배경 */
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
 
 .userModal {
-
     position: fixed;
     top: 50%;
     left: 50%;
@@ -156,21 +125,17 @@
     z-index: 2;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 40%;
-    height:20%;
+    height: 20%;
     text-align: center;
     justify-content: center;
-
 }
+
 .userModal label {
     font-weight: bold;
 }
+
 .nameModal {
     height: 30%;
-}
-.ChatModal {
-    height: 30%;
-    position: relative;
-    display: inline-block;
 }
 
 .userModal input[type="text"] {
@@ -190,6 +155,12 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
+.ChatModal {
+    height: 30%;
+    position: relative;
+    display: inline-block;
+}
+
 
 .userModal button:hover {
     background-color: #0056b3;
@@ -205,18 +176,15 @@
     cursor: pointer;
 }
 
-/* 드롭다운 버튼에 마우스를 올렸을 때 스타일 */
 .ChatModal select:hover {
     background-color: #f9f9f9;
 }
 
-/* 드롭다운 목록 스타일 */
 .ChatModal select option {
     background-color: #fff;
     color: #333;
 }
 
-/* 드롭다운 목록에 마우스를 올렸을 때 스타일 */
 .ChatModal select option:hover {
     background-color: #f9f9f9;
 }

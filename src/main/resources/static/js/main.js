@@ -36,9 +36,23 @@ $(document).ready(function(){
             alert("이름을 입력하세요.");
         }
     });
+    loadRoomList();
+
+    $("#messageForm").submit(function(event) {
+        event.preventDefault();
+        sendChat();
+    });
+
+    $("#deleteRoom").click(function() {
+        if (roomId) {
+            if (confirm(`현재 채팅방 ${roomId}을 삭제하시겠습니까?`)) {
+                deleteRoom(roomId);
+            }
+        } else {
+            alert('현재 접속 중인 채팅방이 없습니다.');
+        }
+    });
 });
-
-
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -59,7 +73,6 @@ function connect() {
         setConnected(true);
         console.log('Connected:', frame); // 연결 확인 로그
 
-
         // 구독
         stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
             console.log("New message received:", chatMessageDTO); // 메시지 수신 확인
@@ -73,12 +86,35 @@ function connect() {
     });
 }
 
-function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
-    }
-    setConnected(false);
-    console.log("Disconnected"); // 연결 해제 로그
+function loadRoomList() {
+    fetch(`/api/room/list`)
+        .then(response => response.json())
+        .then(rooms => {
+            if (rooms && rooms.length > 0) {
+                rooms.forEach(room => {
+                    newButton(room);
+                });
+            } else {
+                console.log('찾을 수 없음');
+            }
+        })
+        .catch(error => {
+            console.error('채팅방 목록을 불러오는 중 오류가 발생했습니다:', error);
+        });
+}
+function deleteRoom(roomId) {
+    fetch(`/api/room/delete?roomId=${encodeURIComponent(roomId)}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('채팅방 삭제 실패');
+            }
+            removeButton(roomId);
+        })
+        .catch(error => {
+            console.error('채팅방을 삭제하는 중 오류가 발생했습니다:', error);
+        });
 }
 
 function sendChat() {
@@ -96,43 +132,9 @@ function sendChat() {
         $("#message").val(''); // 전송 후 입력 필드 비우기
     }
 }
-/*
-document.addEventListener("DOMContentLoaded", function () {
-
-    const roomButtons = document.querySelectorAll('.room-option');
-
-    // Event listener for room selection buttons
-    roomButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const room = this.getAttribute('data-room');
-            const collectionName = (room === 'roomA') ? 'chat' : 'chat_b';
-            selectRoom(room);
-            loadChat(collectionName);
-        });
-    });
-
-
-    roomButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const room = this.getAttribute('data-room');
-            selectRoom(room);
-        });
-    });
-
-
-    document.getElementById('messageForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        sendChat(); // 폼 제출 시 채팅 메시지 전송
-    });
-});
-*/
 
 function getCollectionName(roomId) {
     switch (roomId) {
-        case 'roomA':
-            return 'chat';
-        case 'roomB':
-            return 'chat_b';
         default:
             return roomId; // 새로운 방의 경우 방 ID 자체를 컬렉션 이름으로 사용
     }
@@ -171,7 +173,28 @@ function loadChat(roomId) {
             console.error('채팅 메시지를 불러오는 중 오류가 발생했습니다:', error);
         });
 }
+function newButton(roomId) {
+    const newButton = document.createElement('button');
+    newButton.className = 'room-option';
+    newButton.dataset.room = roomId;
+    newButton.textContent =  roomId;
 
+    // 새로 생성된 채팅방 버튼에 클릭 이벤트 추가
+    newButton.addEventListener('click', function () {
+        selectRoom(roomId);
+
+    });
+    document.querySelector('.room-selection').appendChild(newButton);
+
+
+}
+
+function removeButton(roomId) {
+    const roomButton = document.querySelector(`.room-option[data-room='${roomId}']`);
+    if (roomButton) {
+        roomButton.remove();
+    }
+}
 // 동적으로 채팅방 생성
 document.getElementById('createRoom').addEventListener('click', function () {
     const roomId = document.getElementById('newRoomId').value;
@@ -186,18 +209,7 @@ document.getElementById('createRoom').addEventListener('click', function () {
             .then(response => response.text())
     .then(data => {
             alert(data); // 채팅방 생성 성공 메시지
-            // 새로 생성된 채팅방 버튼 추가
-            const newButton = document.createElement('button');
-            newButton.className = 'room-option';
-            newButton.dataset.room = roomId;
-            newButton.textContent = '채팅방 ' + roomId;
-            document.querySelector('.room-selection').appendChild(newButton);
-
-            // 새로 생성된 채팅방 버튼에 클릭 이벤트 추가
-            newButton.addEventListener('click', function () {
-                selectRoom(roomId);
-
-            });
+            newButton(roomId);
         })
     .catch(error => console.error('Error:', error));
     } else {
@@ -238,14 +250,10 @@ function selectRoom(room) {
         stompClient.unsubscribe('/room/' + roomId);
         stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
             console.log("New message received:", chatMessageDTO);
-            //showChat(JSON.parse(chatMessageDTO.body));
         });
     }
     loadChat(roomId);
 }
-
-
-// 보낸 채팅 보기
 
 function showChat(chat) {
     var messageContent = "[" + chat.senderID + "] " + chat.message;
@@ -253,49 +261,22 @@ function showChat(chat) {
     $("#chatting").append(
         "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
     );
-
-    /*
-    $("#chatting").append(
-        "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
-    );
-
-     */
-
-
-    // 스크롤을 맨 아래로 이동
     $('#chatting').scrollTop($('#chatting')[0].scrollHeight);
 }
 
-// 방 선택 함수
-// 방 선택 이벤트 처리
 $(".room-option").click(function() {
     var room = $(this).data("room");
     selectRoom(room); // 방 선택 시 해당 방 정보를 서버로 전송
 });
 
 
-
-
-// 이벤트 핸들링
 $(function() {
     $("form").on('submit', function(e) {
         e.preventDefault(); // 기본 동작 방지
     });
 
-    $("#connect").click(function() {
-        connect(); // 연결
-    });
-
-    $("#disconnect").click(function() {
-        disconnect(); // 연결 해제
-    });
-
     $("#send").click(function() {
         sendChat(); // 채팅 전송
-    });
-    $("#logout").click(function() {
-        senderID = "";
-        $(".userModal").css("display", "block"); // 사용자 이름 설정 모달 보이기
     });
 
 });
