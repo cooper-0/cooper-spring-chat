@@ -5,12 +5,9 @@ import com.cooper.chat.chat.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-
 import com.cooper.chat.chat.model.Chat;
 import com.cooper.chat.chat.model.ChatMessageDto;
-
 import java.util.List;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,19 +23,20 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    // 이전 채팅을 반환하는 엔드포인트
+    // 채팅 내용 불러오는 엔드포인트
     @GetMapping("/previous/{collectionName}")
     public List<Chat> getPreviousChats(@PathVariable String collectionName) {
         return chatService.getPreviousChats(collectionName);
     }
 
+    // 입력한 채팅 삭제 엔드포인트
     @DeleteMapping("/delete")
     public void deleteMessage(@RequestParam String messageId, String collectionName) {
         chatService.deleteMessage(messageId, collectionName);
     }
 
 
-
+//브로드캐스트 부분
     @MessageMapping("/{roomId}")
     @SendTo("/room/{roomId}")
     public ChatMessageDto chat(@DestinationVariable String roomId, ChatMessageDto message) {

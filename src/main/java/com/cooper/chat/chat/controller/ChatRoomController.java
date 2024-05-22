@@ -17,12 +17,11 @@ public class ChatRoomController {
     public ChatRoomController(ChatService chatService) {
         this.chatService = chatService;
     }
-
+    // 채팅방 생성 엔드포인트
     @PostMapping("/create")
     public ResponseEntity<String> createRoom(@RequestParam String roomId) {
-        // 채팅방 이름으로 컬렉션 생성
         chatService.createChatCollection(roomId);
-        return ResponseEntity.ok("Chat room created successfully");
+        return ResponseEntity.ok("채팅방이 생성되었습니다.");
     }
     // 채팅방 삭제 엔드포인트
     @DeleteMapping("/delete")
@@ -31,7 +30,7 @@ public class ChatRoomController {
         return ResponseEntity.ok("채팅방이 삭제되었습니다.");
     }
 
-    // 채팅방 목록 불러오기 엔드포인트
+    // 채팅방 리스트 엔드포인트
     @GetMapping("/list")
     public List<String> getChatRooms() {
         return chatService.getCollectionNames();

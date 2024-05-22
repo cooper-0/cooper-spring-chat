@@ -16,7 +16,4 @@ public interface ChatMessageRepository extends MongoRepository<Chat, String> {
     // 특정 시간 이후에 전송된 채팅 메시지를 불러오는 메서드
     List<Chat> findBySendDateAfter(LocalDateTime sendDate);
 
-
-    // 기타 필요한 쿼리 메서드 추가 가능
-
 }

@@ -1,6 +1,5 @@
 package com.cooper.chat.chat.model;
 
-
 import lombok.*;
 import javax.persistence.*;
 

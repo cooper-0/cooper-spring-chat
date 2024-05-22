@@ -66,7 +66,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://121.155.7.164:8080/ws-stomp');
+    var socket = new SockJS('http://172.16.82.39:8080/ws-stomp');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function (frame) {
