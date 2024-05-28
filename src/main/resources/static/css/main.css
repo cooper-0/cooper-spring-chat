@@ -8,7 +8,7 @@
     justify-content: space-between;
 }
 
-.conversation-right {
+.conversation-content {
     width: calc(50% - 10px);
     margin-right: 10px;
 }
@@ -23,6 +23,16 @@
     height: 60vh;
 }
 
+.other-chat {
+    flex: 1;
+    padding: 10px;
+}
+
+.my-chat {
+    flex: 1;
+    padding: 10px;
+    text-align: right;
+}
 .selectChatRoom,
 #chatting {
     width: calc(50% - 10px);

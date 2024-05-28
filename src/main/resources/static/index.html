@@ -32,8 +32,17 @@
             </div>
         <button id="deleteRoom">채팅방 삭제</button>
     </div>
-    <div class="conversation-right">
-        <div id="chatting"></div>
+    <div class="conversation-content">
+        <div id="chatting">
+            <div class="other-chat">
+                <div id="otherChat" class="chatting"></div>
+            </div>
+            <div class="my-chat">
+                <div id="myChat" class="chatting"></div>
+            </div>
+        </div>
+
+
         <form id="messageForm">
             <input type="text" id="message" placeholder="Type your message...">
             <button type="submit" id="send">Send</button>
