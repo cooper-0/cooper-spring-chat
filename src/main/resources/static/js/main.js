@@ -66,18 +66,23 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://172.16.82.39:8080/ws-stomp');
+    var socket = new SockJS('http://192.168.0.3:8080/cooper-chat');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function (frame) {
         setConnected(true);
+        $("#conversation").show();
         console.log('Connected:', frame); // 연결 확인 로그
 
-        // 구독
-        stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
+        // 방 선택
+        selectRoom(roomId);
+
+        // 서버에서 채팅 메시지 수신
+        stompClient.subscribe('/topic/' + roomId, function (chatMessageDTO) {
             console.log("New message received:", chatMessageDTO); // 메시지 수신 확인
             showChat(JSON.parse(chatMessageDTO.body)); // 수신된 메시지로 채팅 표시
         });
+
         // 서버에서 사용자 이름 수신
         stompClient.subscribe('/username', function (username) {
             console.log("Username received:", username); // 사용자 이름 수신 확인
@@ -87,7 +92,7 @@ function connect() {
 }
 
 function loadRoomList() {
-    fetch(`/api/room/list`)
+    fetch(`/cooper-chat/list`)
         .then(response => response.json())
         .then(rooms => {
             if (rooms && rooms.length > 0) {
@@ -103,7 +108,7 @@ function loadRoomList() {
         });
 }
 function deleteRoom(roomId) {
-    fetch(`/api/room/delete?roomId=${encodeURIComponent(roomId)}`, {
+    fetch(`/cooper-chat/deleteRoom?roomId=${encodeURIComponent(roomId)}`, {
         method: 'DELETE'
     })
         .then(response => {
@@ -121,7 +126,7 @@ function sendChat() {
     var message = $("#message").val(); // 입력 필드의 메시지 가져오기
 
     if (message !== "") {
-        stompClient.send("/send/" + roomId, {},
+        stompClient.send("/app/" + roomId, {},
             JSON.stringify({
                 'senderID': senderID,
                 'senderEmail': senderEmail,
@@ -143,7 +148,7 @@ function getCollectionName(roomId) {
 function loadChat(roomId) {
     const chatMessagesDiv = document.getElementById('chatting');
     const collectionName = getCollectionName(roomId);
-    const url = `/api/chat/previous/${encodeURIComponent(collectionName)}`;
+    const url = `/cooper-chat/previous/${encodeURIComponent(collectionName)}`;
 
     fetch(url) // 서버의 API 엔드포인트로 요청을 보냅니다.
         .then(response => {
@@ -158,6 +163,11 @@ function loadChat(roomId) {
                 messages.forEach(message => {
                     const messageElement = document.createElement('div');
                     messageElement.textContent = `${message.senderID}: ${message.message}`;
+                    if (message.senderID === senderID) {
+                        messageElement.className = 'my-chat';
+                    } else {
+                        messageElement.className = 'other-chat';
+                    }
                     // 삭제 버튼
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '삭제';
@@ -199,7 +209,7 @@ function removeButton(roomId) {
 document.getElementById('createRoom').addEventListener('click', function () {
     const roomId = document.getElementById('newRoomId').value;
     if (roomId) {
-        fetch('/api/room/create', {
+        fetch('/cooper-chat/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -219,7 +229,7 @@ document.getElementById('createRoom').addEventListener('click', function () {
 });
 // 메시지 삭제 버튼 엔드포인트
 function deleteMessage(messageId, collectionName) {
-    fetch(`/api/chat/delete?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}`, {
+    fetch(`/cooper-chat/deleteChat?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}`, {
         method: 'DELETE'
     })
         .then(response => {
@@ -247,8 +257,8 @@ function selectRoom(room) {
         }));
 
         // 기존 구독 취소하고 새로운 방에 대해 구독
-        stompClient.unsubscribe('/room/' + roomId);
-        stompClient.subscribe('/room/' + roomId, function (chatMessageDTO) {
+        stompClient.unsubscribe('/topic/' + roomId);
+        stompClient.subscribe('/topic/' + roomId, function (chatMessageDTO) {
             console.log("New message received:", chatMessageDTO);
         });
     }
@@ -257,10 +267,18 @@ function selectRoom(room) {
 
 function showChat(chat) {
     var messageContent = "[" + chat.senderID + "] " + chat.message;
+    var chatElement = document.createElement('div');
 
-    $("#chatting").append(
-        "<div class='chatting'><tr><td>" + messageContent + "</td></tr></div>"
-    );
+    if (chat.senderID === senderID) {
+        // 사용자가 입력한 채팅인 경우
+        chatElement.className = 'my-chat';
+    } else {
+        // 다른 사용자가 입력한 채팅인 경우
+        chatElement.className = 'other-chat';
+    }
+
+    chatElement.textContent = messageContent;
+    document.getElementById('chatting').appendChild(chatElement);
     $('#chatting').scrollTop($('#chatting')[0].scrollHeight);
 }
 
