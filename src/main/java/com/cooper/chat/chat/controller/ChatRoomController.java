@@ -8,7 +8,7 @@ import com.cooper.chat.chat.model.ChatRoom;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/room")
+@RequestMapping("/cooper-chat")
 public class ChatRoomController {
 
     private final ChatService chatService;
@@ -24,7 +24,7 @@ public class ChatRoomController {
         return ResponseEntity.ok("채팅방이 생성되었습니다.");
     }
     // 채팅방 삭제 엔드포인트
-    @DeleteMapping("/delete")
+    @DeleteMapping("/deleteRoom")
     public ResponseEntity<String> deleteRoom(@RequestParam String roomId) {
         chatService.deleteRoom(roomId);
         return ResponseEntity.ok("채팅방이 삭제되었습니다.");

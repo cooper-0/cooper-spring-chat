@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import java.util.List;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import com.cooper.chat.chat.model.ChatMessageDto;
+
 
 @Slf4j
 @Service
@@ -33,13 +35,23 @@ public class ChatService {
     public List<Chat> getPreviousChats(String collectionName) {
         return mongoTemplate.findAll(Chat.class, collectionName);
     }
-//채팅 삭제 기능
+
+    //채팅 삭제 기능
     public void deleteMessage(String messageId, String collectionName) {
         Query query = new Query(Criteria.where("id").is(messageId));
         mongoTemplate.remove(query, Chat.class, collectionName);
     }
 
 
+    // 채팅 메시지 저장 기능
+    public Chat saveChatMessage(ChatMessageDto messageDto, String collectionName) {
+        Chat chat = Chat.builder()
+                .senderID(messageDto.getSenderID())
+                .senderEmail(messageDto.getSenderEmail())
+                .message(messageDto.getMessage())
+                .build();
+        return mongoTemplate.save(chat, collectionName);
+    }
 
     // 수정된 createChat 메서드
     public Chat createChat(String collectionName, String roomId, String senderID, String senderEmail, String message) {

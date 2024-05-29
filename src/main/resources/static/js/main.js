@@ -66,7 +66,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://192.168.0.3:8080/cooper-chat');
+    var socket = new SockJS('http://localhost:8080/cooper-chat');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function (frame) {
