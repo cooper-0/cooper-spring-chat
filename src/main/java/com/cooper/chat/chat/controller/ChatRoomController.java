@@ -27,8 +27,11 @@ public class ChatRoomController {
     @DeleteMapping("/deleteRoom")
     public ResponseEntity<String> deleteRoom(@RequestParam String roomId) {
         chatService.deleteRoom(roomId);
+
         return ResponseEntity.ok("채팅방이 삭제되었습니다.");
     }
+
+
 
     // 채팅방 리스트 엔드포인트
     @GetMapping("/list")

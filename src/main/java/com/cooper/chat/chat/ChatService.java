@@ -43,6 +43,7 @@ public class ChatService {
     }
 
 
+
     // 채팅 메시지 저장 기능
     public Chat saveChatMessage(ChatMessageDto messageDto, String collectionName) {
         Chat chat = Chat.builder()
