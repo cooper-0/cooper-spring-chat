@@ -37,6 +37,7 @@
 ### 1. @PostMapping("/message")
 
 ● URL: '/cooper-chat/message'
+
 ● 요청 방식: POST
 
   {
