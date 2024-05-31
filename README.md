@@ -132,6 +132,6 @@
 
 ● 요청 파라미터: 'rooId'
 
-/cooper-chat/deleteRoom?roomId=testroom
+- /cooper-chat/deleteRoom?roomId=testroom
 
 
