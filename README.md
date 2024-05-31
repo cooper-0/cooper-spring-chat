@@ -62,7 +62,9 @@
 ### 2. @GetMapping("/previous/{collectionName}")
 
 ● URL: '/cooper-chat/previous/{collectionName}'
+
 ● 요청 방식: GET
+
 ● 특정 컬렉션의 이전 채팅 메시지를 반환
 
 ● 응답: 'List<Chat>' 객체로 반환
@@ -113,7 +115,9 @@
 ### 5. @DeleteMapping("/deleteRoom")
 
 ● URL: '/cooper-chat/deleteRoom'
+
 ● 요청 방식: DELETE
+
 ● 요청 파라미터: 'rooId'
 
 /cooper-chat/deleteRoom?roomId=testroom
