@@ -34,14 +34,14 @@
 
 ## REST API 구성
 
-1. @PostMapping("/message")
+### 1. @PostMapping("/message")
 
 ● URL: '/cooper-chat/message'
 - 요청 방식: POST
 - 클라이언트가 채팅 메시지를 전송할 때 호출
 - 메시지를 'collectionName'이라는 컬렉션에 저장
 
-2. @GetMapping("/previous/{collectionName}")
+### 2. @GetMapping("/previous/{collectionName}")
 
 ● URL: '/cooper-chat/previous/{collectionName}'
 ● 요청 방식: GET
