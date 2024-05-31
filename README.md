@@ -59,6 +59,7 @@
     
  }
 
+
 ### 2. @GetMapping("/previous/{collectionName}")
 
 ● URL: '/cooper-chat/previous/{collectionName}'
@@ -91,6 +92,15 @@
 
 ● URL: '/cooper-chat/deleteChat'
 
+● 요청 방식: DELETE
+
+● 요청 파라미터:
+
+- 'messageId', 'collectionName'
+
+'/cooper-chat/deleteChat?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}'
+
+
 
 ### 4. @PostMapping("/create")
 
@@ -111,6 +121,7 @@
     "message": "채팅방이 생성되었습니다."
 
 }
+
 
 ### 5. @DeleteMapping("/deleteRoom")
 
