@@ -99,7 +99,7 @@
 
 - 'messageId', 'collectionName'
 
-'/cooper-chat/deleteChat?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}'
+- '/cooper-chat/deleteChat?messageId=${messageId}&collectionName=${encodeURIComponent(collectionName)}'
 
 
 
