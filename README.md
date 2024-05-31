@@ -37,9 +37,27 @@
 ### 1. @PostMapping("/message")
 
 ● URL: '/cooper-chat/message'
-- 요청 방식: POST
-- 클라이언트가 채팅 메시지를 전송할 때 호출
-- 메시지를 'collectionName'이라는 컬렉션에 저장
+● 요청 방식: POST
+
+  {
+
+      "senderID: "user",
+  
+      "senderEmail": user@example.com",
+  
+      "message": "Hello",
+  
+      "roomId": "testroom"
+  
+  }
+
+● 응답:
+
+ {
+ 
+    "message": "채팅 메시지가 성공적으로 저장되었습니다."
+    
+ }
 
 ### 2. @GetMapping("/previous/{collectionName}")
 
@@ -47,8 +65,56 @@
 ● 요청 방식: GET
 ● 특정 컬렉션의 이전 채팅 메시지를 반환
 
-  응답: 'List<Chat>' 객체로 반환
+● 응답: 'List<Chat>' 객체로 반환
+
+{
+    
+    "_id":{"$oid":"665819bcbff7357f149bad52"},
+
+    "senderID":"User",
+    
+    "senderEmail":"user@example.com",
+    
+    "message":"ㅇㅇ",
+    
+    "sendDate":{"$date":{"$numberLong":"1717049788962"}},
+    
+    "_class":"com.cooper.chat.chat.model.Chat"
+
+}
+    
+  
 
 ### 3. @DeleteMapping("/deleteChat")
 
 ● URL: '/cooper-chat/deleteChat'
+
+
+### 4. @PostMapping("/create")
+
+● URL: '/cooper-chat/create'
+● 요청 방식: POST
+
+{
+
+    "roomId": "testroom"
+
+}
+
+● 응답
+
+{
+
+    "message": "채팅방이 생성되었습니다."
+
+}
+
+### 5. @DeleteMapping("/deleteRoom")
+
+● URL: '/cooper-chat/deleteRoom'
+● 요청 방식: DELETE
+● 요청 파라미터: 'rooId'
+
+/cooper-chat/deleteRoom?roomId=testroom
+
+
