@@ -40,7 +40,7 @@
 
 ● 요청 방식: POST
 
-  {
+  
 
       "senderID: "user",
   
@@ -50,15 +50,15 @@
   
       "roomId": "testroom"
   
-  }
+  
 
 ● 응답:
 
- {
+ 
  
     "message": "채팅 메시지가 성공적으로 저장되었습니다."
     
- }
+ 
 
 
 ### 2. @GetMapping("/previous/{collectionName}")
@@ -71,7 +71,7 @@
 
 ● 응답: 'List<Chat>' 객체로 반환
 
-{
+
     
     "_id":{"$oid":"665819bcbff7357f149bad52"},
 
@@ -85,7 +85,7 @@
     
     "_class":"com.cooper.chat.chat.model.Chat"
 
-}
+
     
   
 
@@ -109,19 +109,19 @@
 
 ● 요청 방식: POST
 
-{
+
 
     "roomId": "testroom"
 
-}
+
 
 ● 응답
 
-{
+
 
     "message": "채팅방이 생성되었습니다."
 
-}
+
 
 
 ### 5. @DeleteMapping("/deleteRoom")
