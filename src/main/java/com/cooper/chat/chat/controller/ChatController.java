@@ -2,6 +2,7 @@ package com.cooper.chat.chat.controller;
 
 
 import com.cooper.chat.chat.ChatService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,9 +13,9 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+@Slf4j
 @RestController
-@RequestMapping("/cooper-chat")
+//@RequestMapping("/cooper-chat")
 public class ChatController {
 
     private final ChatService chatService;
@@ -25,25 +26,25 @@ public class ChatController {
     }
 
     // 채팅 메시지 저장 엔드포인트
-    @PostMapping("/message")
+    @PostMapping("/cooper-chat/message")
     public ResponseEntity<String> saveChatMessage(@RequestBody ChatMessageDto messageDto, @RequestParam String collectionName) {
         Chat chat = chatService.saveChatMessage(messageDto, collectionName);
         return ResponseEntity.ok("채팅 메시지가 성공적으로 저장되었습니다.");
     }
 
     // 채팅 내용 불러오는 엔드포인트
-    @GetMapping("/previous/{collectionName}")
+    @GetMapping("/cooper-chat/previous/{collectionName}")
     public List<Chat> getPreviousChats(@PathVariable String collectionName) {
         return chatService.getPreviousChats(collectionName);
     }
 
     // 입력한 채팅 삭제 엔드포인트
-    @DeleteMapping("/deleteChat")
+    @DeleteMapping("/cooper-chat/deleteChat")
     public void deleteMessage(@RequestParam String messageId, String collectionName) {
         chatService.deleteMessage(messageId, collectionName);
     }
 
-    @GetMapping("/test")
+    @GetMapping("/cooper-chat/test")
     public String getChatPage() {
         return "/index"; // src/main/resources/templates/index.html
     }
@@ -53,6 +54,7 @@ public class ChatController {
     @MessageMapping("/{roomId}")
     @SendTo("/topic/{roomId}")
     public ChatMessageDto chat(@DestinationVariable String roomId, ChatMessageDto message) {
+        log.info("채팅 메시지");
         String collectionName = getCollectionName(roomId);
         Chat chat = chatService.createChat(collectionName, roomId, message.getSenderID(), message.getSenderEmail(), message.getMessage());
 
